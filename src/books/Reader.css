@@ -1,0 +1,48 @@
+.reader {
+  padding: 40px;
+  color: white;
+  display: flex;
+  gap: 40px;
+}
+
+.reader-left img {
+  width: 250px;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+}
+
+.reader-right {
+  max-width: 600px;
+}
+
+.reader-right h2 {
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+
+.reader-right p {
+  color: #ccc;
+  margin-bottom: 10px;
+}
+
+.reader-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.reader-buttons button {
+  padding: 10px 15px;
+  background: #e50914;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.reader-buttons button:hover {
+  background: #f6121d;
+}

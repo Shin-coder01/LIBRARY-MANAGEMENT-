@@ -1,0 +1,56 @@
+.library-page {
+  padding: 40px;
+  color: white;
+}
+
+.section {
+  margin-bottom: 30px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.card {
+  width: 200px;
+  background: #1f1f1f;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.card h4 {
+  margin-bottom: 5px;
+}
+
+.card p {
+  color: #ccc;
+  font-size: 14px;
+}
+
+.card button {
+  margin-top: 10px;
+  width: 100%;
+  padding: 8px;
+  background: #e50914;
+  border: none;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.card button:hover {
+  background: #f6121d;
+}
+@media (max-width:768px){
+
+  .row{
+    justify-content: center;
+  }
+
+  .card{
+    width: 90%;
+  }
+
+}

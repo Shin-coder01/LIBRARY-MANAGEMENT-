@@ -1,0 +1,52 @@
+.issue-page {
+  padding: 40px;
+  color: white;
+}
+
+.issue-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.issue-form input {
+  padding: 10px;
+  background: #333;
+  border: none;
+  color: white;
+  border-radius: 5px;
+}
+
+.issue-form button {
+  background: #22c55e;
+  border: none;
+  padding: 10px 15px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.issue-form button:hover {
+  background: #16a34a;
+}
+
+.issue-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.issue-table th,
+.issue-table td {
+  border: 1px solid #444;
+  padding: 10px;
+  text-align: left;
+}
+
+.issue-table th {
+  background: #1f1f1f;
+}
+
+.issue-table tr:hover {
+  background: #222;
+}

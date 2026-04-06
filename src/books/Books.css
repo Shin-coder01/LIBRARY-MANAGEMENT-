@@ -1,0 +1,322 @@
+.books-page{
+  padding:20px 30px;
+  background:#141414;
+  min-height:100vh;
+  color:white;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.search{
+  padding:10px;
+  width:300px;
+  border:none;
+  border-radius:4px;
+  margin-bottom:30px;
+  background:#333;
+  color:white;
+  outline:none;
+}
+
+.search::placeholder{
+  color:#aaa;
+}
+
+.books-section{
+  margin-bottom:30px;
+}
+
+.books-section h2{
+  margin-bottom:12px;
+  font-size:20px;
+}
+
+/* 🔥 GRID FIX */
+.book-row{
+  display:grid;
+  gap:20px;
+}
+
+/* Desktop */
+@media (min-width:1025px){
+  .book-row{
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Tablet */
+@media (min-width:481px) and (max-width:1024px){
+  .book-row{
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Mobile */
+@media (max-width:480px){
+  .book-row{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 🔥 IMPORTANT CHANGE */
+.book-card{
+  width:100%;
+  position:relative;
+  transition:0.3s;
+  cursor:pointer;
+}
+
+.book-card:hover{
+  transform:scale(1.08);
+}
+
+.book-image{
+  position:relative;
+}
+
+.book-image img{
+  width:100%;
+  height:250px;
+  object-fit:cover;
+  border-radius:6px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.5);
+}
+
+.fav-icon{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:rgba(0, 0, 0, 0.9);
+  padding:5px 7px;
+  border-radius:50%;
+  font-size:14px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.fav-icon:hover{
+  color:red;
+  transform:scale(1.2);
+}
+
+.book-card h4{
+  margin:8px 0 2px;
+  font-size:14px;
+  color:white;
+}
+
+.book-card p{
+  font-size:12px;
+  color:#bbb;
+}
+
+.book-buttons{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-top:10px;
+}
+
+.book-buttons button{
+  background:#e50914;
+  border:none;
+  padding:8px;
+  color:white;
+  border-radius:4px;
+  cursor:pointer;
+  font-size:13px;
+  transition:0.3s;
+}
+
+.book-buttons button:hover{
+  background:#f6121d;
+}
+
+.book-buttons button:disabled{
+  background:#555;
+  cursor:not-allowed;
+}
+
+.overlay{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:250px;
+  background:rgba(0,0,0,0.6);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.books-page{
+  padding:20px 30px;
+  background:#141414;
+  min-height:100vh;
+  color:white;
+  font-family:Arial, Helvetica, sans-serif;
+}
+
+.search{
+  padding:10px;
+  width:300px;
+  border:none;
+  border-radius:4px;
+  margin-bottom:30px;
+  background:#333;
+  color:white;
+  outline:none;
+}
+
+.search::placeholder{
+  color:#aaa;
+}
+
+.books-section{
+  margin-bottom:30px;
+}
+
+.books-section h2{
+  margin-bottom:12px;
+  font-size:20px;
+}
+
+/* 🔥 GRID SYSTEM */
+.book-row{
+  display:grid;
+  gap:20px;
+}
+
+/* Desktop → 5 */
+@media (min-width:1025px){
+  .book-row{
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* Tablet → 4 */
+@media (min-width:481px) and (max-width:1024px){
+  .book-row{
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Mobile → 2 */
+@media (max-width:480px){
+  .book-row{
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .search{
+    width:100%;
+  }
+}
+
+/* CARD */
+.book-card{
+  width:100%;
+  position:relative;
+  transition:0.3s;
+  cursor:pointer;
+}
+
+.book-card:hover{
+  transform:scale(1.08);
+}
+
+.book-image{
+  position:relative;
+}
+
+.book-image img{
+  width:100%;
+  height:250px;
+  object-fit:cover;
+  border-radius:6px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.5);
+}
+
+.fav-icon{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background:rgba(0, 0, 0, 0.9);
+  padding:5px 7px;
+  border-radius:50%;
+  font-size:14px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.fav-icon:hover{
+  color:red;
+  transform:scale(1.2);
+}
+
+.book-card h4{
+  margin:8px 0 2px;
+  font-size:14px;
+  color:white;
+}
+
+.book-card p{
+  font-size:12px;
+  color:#bbb;
+}
+
+.book-buttons{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-top:10px;
+}
+
+.book-buttons button{
+  background:#e50914;
+  border:none;
+  padding:8px;
+  color:white;
+  border-radius:4px;
+  cursor:pointer;
+  font-size:13px;
+  transition:0.3s;
+}
+
+.book-buttons button:hover{
+  background:#f6121d;
+}
+
+.book-buttons button:disabled{
+  background:#555;
+  cursor:not-allowed;
+}
+
+/* OVERLAY */
+.overlay{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:250px;
+  background:rgba(0,0,0,0.6);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  opacity:0;
+  transition:0.3s;
+  border-radius:6px;
+}
+
+.book-card:hover .overlay{
+  opacity:1;
+}
+
+.overlay button{
+  background:#e50914;
+  color:white;
+  border:none;
+  padding:6px 12px;
+  border-radius:5px;
+  cursor:pointer;
+  font-size:13px;
+}

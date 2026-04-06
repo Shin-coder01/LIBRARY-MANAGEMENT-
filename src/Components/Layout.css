@@ -1,0 +1,13 @@
+.content {
+  padding: 20px 30px;
+  background: #141414;
+  min-height: calc(100vh - 70px);
+  width: 100%;
+  margin-top: 70px;
+  box-sizing: border-box;
+}
+
+.content.shift {
+  margin-left: 240px;
+  width: calc(100% - 240px);
+}
