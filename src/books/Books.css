@@ -289,7 +289,6 @@
   cursor:not-allowed;
 }
 
-/* OVERLAY */
 .overlay{
   position:absolute;
   top:0;
@@ -306,7 +305,6 @@
   transition:0.3s;
   border-radius:6px;
 }
-
 .book-card:hover .overlay{
   opacity:1;
 }
