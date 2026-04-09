@@ -101,7 +101,6 @@ if(!fav.find(b=>b.title===book.title)){
 fav.push(book);
 localStorage.setItem("favorites",JSON.stringify(fav));
 alert("Added to favorites");
-setRefresh(prev=>prev+1);
 }else{
 alert("Already in favorites");
 }
