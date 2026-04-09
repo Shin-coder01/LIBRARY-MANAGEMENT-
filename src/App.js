@@ -2,11 +2,11 @@ import { Routes, Route } from "react-router-dom";
 
 import Layout from "./Components/Layout";
 
-import Home from "./Pages/Home";
-import Login from "./Pages/Login";
-import Register from "./Pages/Register";
-import MyLibrary from "./Pages/MyLibrary";
-import Profile from "./Pages/Profile";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import MyLibrary from "./pages/MyLibrary";
+import Profile from "./pages/Profile";
 
 import Dashboard from "./dashboard/Dashboard";
 
