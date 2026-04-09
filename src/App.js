@@ -12,7 +12,7 @@ import Dashboard from "./dashboard/Dashboard";
 
 import Books from "./books/Books";
 import AddEditBook from "./books/AddEditBook";
-import IssueBook from "./issuebooks/Issuebook";
+import IssueBook from "./IssueBooks/IssueBook";
 import Reader from "./books/Reader";
 import Payment from "./books/Payment";
 
