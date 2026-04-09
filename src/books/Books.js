@@ -1,5 +1,4 @@
 import { useNavigate, useOutletContext } from "react-router-dom";
-import { useState } from "react";
 import "./Books.css";
 
 function Books(){
@@ -8,7 +7,6 @@ const { search = "" } = useOutletContext() || {};
 const navigate = useNavigate();
 const user = JSON.parse(localStorage.getItem("user")) || {};
 
-const [refresh, setRefresh] = useState(0);
 
 /* DEFAULT BOOKS */
 const defaultBooks = [
@@ -86,7 +84,6 @@ borrowed.push({title:book.title,author:book.author,start:Date.now()});
 localStorage.setItem("borrowedBooks",JSON.stringify(borrowed));
 
 alert("Book borrowed");
-setRefresh(prev=>prev+1);
 };
 
 const getBorrowDaysLeft=(book)=>{
