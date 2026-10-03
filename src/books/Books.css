@@ -10,8 +10,10 @@
   grid-template-columns: minmax(0, 1.25fr) minmax(300px, 0.75fr);
   gap: 42px;
   align-items: end;
-  padding: 52px 0 44px;
-  border-bottom: 1px solid var(--line);
+  margin-top: 26px;
+  padding: 36px 32px 31px;
+  color: #ffffff;
+  background: #17262b;
 }
 
 .eyebrow {
@@ -19,7 +21,7 @@
   align-items: center;
   gap: 9px;
   margin: 0 0 20px;
-  color: var(--forest);
+  color: #abd0b6;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.11em;
@@ -31,20 +33,20 @@
 .catalogue-intro h1 {
   max-width: 680px;
   margin: 0;
-  color: var(--ink);
+  color: #ffffff;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(43px, 5vw, 76px);
+  font-size: 70px;
   font-weight: 400;
   letter-spacing: 0;
   line-height: 0.98;
 }
 
-.catalogue-intro h1 em { color: var(--blue); font-weight: 400; }
+.catalogue-intro h1 em { color: #e6c585; font-weight: 400; }
 
 .catalogue-copy {
   max-width: 435px;
   margin: 22px 0 0;
-  color: var(--muted);
+  color: rgba(255, 255, 255, 0.78);
   font-size: 15px;
   line-height: 1.65;
 }
@@ -53,7 +55,7 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   align-self: stretch;
-  border-top: 1px solid var(--ink);
+  border-top: 1px solid rgba(255, 255, 255, 0.55);
 }
 
 .catalogue-summary div {
@@ -62,7 +64,7 @@
   padding: 18px 12px 0 0;
   flex-direction: column;
   justify-content: flex-end;
-  border-right: 1px solid var(--line);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .catalogue-summary div + div { padding-left: 12px; }
@@ -70,14 +72,23 @@
 
 .catalogue-summary strong {
   display: block;
-  color: var(--ink);
+  color: #ffffff;
   font-family: Georgia, "Times New Roman", serif;
-  font-size: clamp(34px, 3.1vw, 48px);
+  font-size: 44px;
   font-weight: 400;
   line-height: 1;
 }
 
-.catalogue-summary span { margin-top: 8px; color: var(--muted); font-size: 11px; }
+.catalogue-summary span { margin-top: 8px; color: rgba(255, 255, 255, 0.7); font-size: 11px; }
+
+.catalogue-intro > .pointillist-scene { opacity: 0.72; }
+.catalogue-worlds { display: flex; min-height: 64px; gap: 8px; align-items: center; border-bottom: 1px solid var(--line); }
+.catalogue-worlds > span { margin-right: auto; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.catalogue-worlds button { display: inline-flex; min-height: 36px; gap: 8px; align-items: center; padding: 0 9px; color: var(--muted); background: transparent; cursor: pointer; font-size: 11px; white-space: nowrap; }
+.catalogue-worlds button i { color: var(--coral); font-size: 9px; font-style: normal; }
+.catalogue-worlds button:hover, .catalogue-worlds button.active { color: var(--ink); }
+.catalogue-worlds button.active i { color: var(--forest); }
+.catalogue-worlds button:focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
 
 .catalogue-controls {
   display: flex;
@@ -300,19 +311,26 @@
 
 @media (max-width: 1050px) {
   .books-page { padding-right: 26px; padding-left: 26px; }
+  .catalogue-intro h1 { font-size: 58px; }
+  .catalogue-summary strong { font-size: 39px; }
   .catalogue-intro { grid-template-columns: 1fr; gap: 34px; }
   .catalogue-summary { min-height: 100px; max-width: 510px; }
   .category-tabs { max-width: 65%; }
+  .catalogue-worlds { gap: 2px; overflow-x: auto; }
+  .catalogue-worlds > span { position: sticky; left: 0; padding-right: 8px; background: var(--paper); }
 }
 
 @media (max-width: 650px) {
   .books-page { padding: 0 16px 48px; }
-  .catalogue-intro { min-height: 0; gap: 29px; padding: 36px 0 28px; }
+  .catalogue-intro { min-height: 0; gap: 29px; margin-top: 16px; padding: 28px 18px 22px; }
   .catalogue-intro h1 { font-size: 44px; }
   .catalogue-copy { font-size: 14px; }
   .catalogue-summary { min-height: 82px; }
   .catalogue-summary strong { font-size: 31px; }
   .catalogue-summary span { font-size: 10px; }
+  .catalogue-worlds { margin: 0 -16px; padding: 0 12px; }
+  .catalogue-worlds > span { display: none; }
+  .catalogue-worlds button { min-height: 42px; }
   .catalogue-controls { display: block; padding: 16px 0 0; }
   .category-tabs { max-width: none; margin-top: 15px; padding-bottom: 10px; }
   .catalogue-shelves { padding-top: 27px; }

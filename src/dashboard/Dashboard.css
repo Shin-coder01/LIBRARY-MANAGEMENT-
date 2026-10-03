@@ -2,7 +2,7 @@
 
 .dashboard-head { display: flex; gap: 28px; align-items: end; justify-content: space-between; padding-bottom: 37px; border-bottom: 1px solid var(--line); }
 .dashboard-kicker { margin: 0 0 12px; color: var(--forest); font-size: 11px; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; }
-.dashboard-head h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: clamp(40px, 4.5vw, 64px); font-weight: 400; letter-spacing: 0; line-height: 0.95; }
+.dashboard-head h1 { margin: 0; color: var(--ink); font-family: Georgia, "Times New Roman", serif; font-size: 58px; font-weight: 400; letter-spacing: 0; line-height: 0.95; }
 .dashboard-lead { max-width: 510px; margin: 17px 0 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
 
 .dashboard-actions { display: flex; gap: 9px; flex: 0 0 auto; align-items: center; }
@@ -23,8 +23,9 @@
 
 .dashboard-lower { display: grid; grid-template-columns: 1.08fr 0.92fr; gap: 0; margin-top: 40px; border: 1px solid var(--line); }
 .dashboard-focus { min-height: 288px; padding: 34px; color: #ffffff; background: #1f2834; }
+.dashboard-focus > .pointillist-scene { opacity: 0.34; }
 .dashboard-focus .dashboard-kicker { color: #a4c2ff; }
-.dashboard-focus h2 { max-width: 440px; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(29px, 3vw, 42px); font-weight: 400; line-height: 1.02; }
+.dashboard-focus h2 { max-width: 440px; margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 40px; font-weight: 400; line-height: 1.02; }
 .dashboard-focus p:not(.dashboard-kicker) { max-width: 415px; margin: 16px 0 24px; color: #c5ced7; font-size: 14px; line-height: 1.6; }
 .dashboard-focus button { min-height: 38px; background: #ffffff; color: #1f2834; }
 .dashboard-focus button:hover { background: #dfe8ff; }
@@ -40,6 +41,8 @@
 
 @media (max-width: 1000px) {
   .dashboard-page { padding-right: 26px; padding-left: 26px; }
+  .dashboard-head h1 { font-size: 50px; }
+  .dashboard-focus h2 { font-size: 36px; }
   .dashboard-stat-grid { grid-template-columns: repeat(2, 1fr); }
   .dashboard-lower { grid-template-columns: 1fr; }
 }
@@ -48,6 +51,7 @@
   .dashboard-page { padding: 35px 16px 48px; }
   .dashboard-head { display: block; padding-bottom: 28px; }
   .dashboard-head h1 { font-size: 42px; }
+  .dashboard-focus h2 { font-size: 30px; }
   .dashboard-actions { margin-top: 24px; }
   .dashboard-stat-grid { margin-top: 26px; }
   .dashboard-stat { min-height: 155px; padding: 16px 12px; }

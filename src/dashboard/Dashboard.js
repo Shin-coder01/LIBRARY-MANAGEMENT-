@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { FiArrowUpRight, FiBookOpen, FiLayers, FiPlusCircle, FiUsers } from "react-icons/fi";
+import PointillistScene from "../Components/PointillistScene";
+import { bookApi } from "../books/bookApi";
 import "./Dashboard.css";
 
 const stored = (key, fallback) => {
@@ -24,8 +25,7 @@ function Dashboard() {
       const digitalLoans = Object.keys(stored("virtualBooks", {})).length;
       const members = stored("users", []).length;
       try {
-        const response = await axios.get("http://localhost:8080/api/books");
-        const books = Array.isArray(response.data) ? response.data : [];
+        const books = await bookApi.list();
         setMetrics({
           titles: books.length,
           available: books
@@ -87,7 +87,8 @@ function Dashboard() {
       </section>
 
       <section className="dashboard-lower">
-        <div className="dashboard-focus">
+        <div className="dashboard-focus pointillist-host">
+          <PointillistScene variant="circuit" className="pointillist-scene--soft" />
           <p className="dashboard-kicker">Reading room</p>
           <h2>The collection is ready when you are.</h2>
           <p>Discover an overlooked classic, begin a digital read, or keep a close eye on active loans.</p>

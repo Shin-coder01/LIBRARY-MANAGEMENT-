@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useOutletContext } from "react-router-dom";
-import axios from "axios";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { FiArrowUpRight, FiBookOpen, FiCheck, FiEdit3, FiHeart, FiRefreshCw } from "react-icons/fi";
+import PointillistScene from "../Components/PointillistScene";
+import { bookApi } from "./bookApi";
 import "./Books.css";
 
 const categories = ["Romance", "Adventure", "Mystery", "Self Help", "Fantasy", "Sci-Fi", "Business", "Classic", "Finance"];
+const readingWorlds = ["Adventure", "Mystery", "Romance", "Fantasy", "Sci-Fi", "Classic"];
 
 const readStoredValue = (key, fallback) => {
   try {
@@ -17,31 +19,31 @@ const readStoredValue = (key, fallback) => {
 function Books() {
   const { search = "" } = useOutletContext() || {};
   const navigate = useNavigate();
+  const location = useLocation();
   const user = readStoredValue("user", {});
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState(location.state?.category || "All");
   const [favorites, setFavorites] = useState(() => readStoredValue("favorites", []));
   const [notice, setNotice] = useState("");
   const [borrowingId, setBorrowingId] = useState(null);
 
-  const fetchBooks = async () => {
+  const fetchBooks = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      const response = await axios.get("http://localhost:8080/api/books");
-      setBooks(Array.isArray(response.data) ? response.data : []);
+      setBooks(await bookApi.list());
     } catch {
       setError("The catalogue could not be reached. Start the library server and try again.");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchBooks();
-  }, []);
+  }, [fetchBooks]);
 
   const filteredBooks = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -64,6 +66,7 @@ function Books() {
     .filter((book) => book.type === "physical")
     .reduce((total, book) => total + Number(book.available || 0), 0);
   const digitalTitles = books.filter((book) => book.type === "virtual").length;
+  const worldProgress = Math.max(0, readingWorlds.indexOf(activeCategory)) / (readingWorlds.length - 1);
 
   const isReading = (book) => Boolean(readStoredValue("virtualBooks", {})[book.title]);
 
@@ -76,7 +79,7 @@ function Books() {
 
   const getBorrowDaysLeft = (book) => {
     const borrowed = readStoredValue("borrowedBooks", []);
-    const found = borrowed.find((item) => item.id === book.id);
+    const found = borrowed.find((item) => item.id === book.id && (!item.userEmail || item.userEmail.toLowerCase() === user.email?.toLowerCase()));
     if (!found) return null;
     const elapsedDays = Math.floor((Date.now() - found.start) / (1000 * 60 * 60 * 24));
     return Math.max(0, 90 - elapsedDays);
@@ -84,9 +87,11 @@ function Books() {
 
   const readBook = (book) => {
     const issued = readStoredValue("virtualBooks", {});
-    issued[book.title] = issued[book.title] || { start: Date.now() };
+    const previous = issued[book.title];
+    const expired = previous?.start && Date.now() - previous.start >= 15 * 86400000;
+    issued[book.title] = !previous || expired ? { start: Date.now() } : previous;
     localStorage.setItem("virtualBooks", JSON.stringify(issued));
-    navigate(`/reader/${book.title}`);
+    navigate(`/reader/${encodeURIComponent(book.title)}`);
   };
 
   const checkoutBook = async (book) => {
@@ -94,13 +99,15 @@ function Books() {
     setBorrowingId(book.id);
     try {
       const updatedBook = { ...book, available: book.available - 1 };
-      await axios.put(`http://localhost:8080/api/books/${book.id}`, updatedBook);
+      await bookApi.update(book.id, updatedBook);
       setBooks((current) => current.map((item) => item.id === book.id ? updatedBook : item));
       const borrowed = readStoredValue("borrowedBooks", []);
       localStorage.setItem("borrowedBooks", JSON.stringify([...borrowed, {
         id: book.id,
         title: book.title,
         author: book.author,
+        userEmail: user.email || "",
+        student: user.name || "",
         start: Date.now()
       }]));
       setNotice(`"${book.title}" is now in your library.`);
@@ -126,10 +133,10 @@ function Books() {
       if (isReading(book)) {
         const daysLeft = getDaysLeft(book);
         return daysLeft > 0
-          ? { label: `Continue reading - ${daysLeft}d left`, onClick: () => navigate(`/reader/${book.title}`) }
+          ? { label: `Continue reading - ${daysLeft}d left`, onClick: () => navigate(`/reader/${encodeURIComponent(book.title)}`) }
           : user.role === "admin"
             ? { label: "Continue reading", onClick: () => readBook(book) }
-            : { label: "Reading period ended", onClick: () => navigate(`/payment/${book.title}`), muted: true };
+            : { label: "Reading period ended", onClick: () => navigate(`/payment/${encodeURIComponent(book.title)}`), muted: true };
       }
       return { label: "Start reading", onClick: () => readBook(book) };
     }
@@ -156,7 +163,8 @@ function Books() {
 
   return (
     <div className="books-page">
-      <section className="catalogue-intro" aria-labelledby="catalogue-heading">
+      <section className="catalogue-intro pointillist-host" aria-labelledby="catalogue-heading">
+        <PointillistScene variant="books" progress={worldProgress} />
         <div>
           <p className="eyebrow"><span /> Curated collection</p>
           <h1 id="catalogue-heading">Find a book.<br /><em>Keep the feeling.</em></h1>
@@ -168,6 +176,15 @@ function Books() {
           <div><strong>{digitalTitles}</strong><span>digital reads</span></div>
         </div>
       </section>
+
+      <nav className="catalogue-worlds" aria-label="Browse reading worlds">
+        <span>Travel by feeling</span>
+        {readingWorlds.map((category, index) => (
+          <button key={category} type="button" className={activeCategory === category ? "active" : ""} aria-pressed={activeCategory === category} onClick={() => setActiveCategory(category)}>
+            <i aria-hidden="true">{String(index + 1).padStart(2, "0")}</i>{category}
+          </button>
+        ))}
+      </nav>
 
       <section className="catalogue-controls" aria-label="Catalogue filters">
         <div className="catalogue-result">

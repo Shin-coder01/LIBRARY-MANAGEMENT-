@@ -2,24 +2,32 @@ package com.example.library.controller;
 
 import com.example.library.entity.Book;
 import com.example.library.service.BookService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/books")
-@CrossOrigin(origins = "*") // For CORS, adjust as needed
+@CrossOrigin(origins = "*")
 public class BookController {
 
-    @Autowired
-    private BookService bookService;
+    private final BookService bookService;
+
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
     @GetMapping
     public List<Book> getAllBooks() {
         return bookService.getAllBooks();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Book> getBook(@PathVariable Long id) {
+        return bookService.getBookById(id)
+                .map(book -> ResponseEntity.ok(book))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
@@ -27,14 +35,22 @@ public class BookController {
         return bookService.addBook(book);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book book) {
+        return bookService.getBookById(id)
+                .map(existing -> {
+                    book.setId(id);
+                    return ResponseEntity.ok(bookService.addBook(book));
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteBook(@PathVariable Long id) {
-        Optional<Book> book = bookService.getBookById(id);
-        if (book.isPresent()) {
-            bookService.deleteBook(id);
-            return ResponseEntity.noContent().build();
-        } else {
+        if (bookService.getBookById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        bookService.deleteBook(id);
+        return ResponseEntity.noContent().build();
     }
 }

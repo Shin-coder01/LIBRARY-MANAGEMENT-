@@ -1,57 +1,52 @@
-.edit-book {
-  padding: 40px;
-  color: white;
-}
+.book-editor-page { min-height: calc(100vh - var(--header-height)); padding: 30px 38px 70px; background: var(--paper); }
+.book-editor-topline { display: flex; align-items: center; justify-content: space-between; padding-bottom: 15px; color: var(--muted); border-bottom: 1px solid var(--line); font-size: 11px; }
+.editor-back { display: inline-flex; gap: 8px; align-items: center; color: var(--ink); text-decoration: none; }
+.editor-back:hover { color: var(--blue); }
+.book-editor-heading { display: flex; gap: 24px; align-items: end; justify-content: space-between; padding: 42px 0 32px; }
+.book-editor-heading > .pointillist-scene { opacity: 0.22; }
+.book-editor-heading h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 56px; font-weight: 400; line-height: 1; }
+.book-editor-heading > div:first-child > p:last-child { margin: 13px 0 0; color: var(--muted); font-size: 14px; }
+.editor-index { color: var(--coral); font-family: Georgia, "Times New Roman", serif; font-size: 37px; line-height: 1; }
+.editor-index span { color: var(--muted); font-family: inherit; font-size: 12px; }
+.book-editor-form { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr); column-gap: 54px; row-gap: 24px; padding-top: 25px; border-top: 1px solid var(--ink); }
+.editor-section-heading { display: flex; gap: 12px; align-items: baseline; margin-bottom: 22px; }
+.editor-section-heading > span { color: var(--coral); font-size: 11px; font-weight: 700; }
+.editor-section-heading h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 23px; font-weight: 400; }
+.editor-fields, .editor-aside { display: flex; min-width: 0; flex-direction: column; align-items: stretch; }
+.editor-fields > label, .editor-aside > label:not(.upload-control) { margin: 15px 0 7px; color: var(--ink); font-size: 12px; font-weight: 650; }
+.editor-fields input, .editor-aside input:not([type="file"]) { width: 100%; min-height: 43px; padding: 0 11px; color: var(--ink); background: #ffffff; border: 1px solid var(--line); border-radius: 0; }
+.editor-fields input:focus, .editor-aside input:focus, .book-content-input:focus { border-color: var(--blue); outline: 2px solid rgba(36, 87, 230, 0.12); }
+.editor-field-label { margin: 17px 0 8px; font-size: 12px; font-weight: 650; }
+.format-switch { display: flex; gap: 8px; }
+.format-switch label { display: flex; min-width: 120px; min-height: 39px; gap: 8px; align-items: center; padding: 0 11px; color: var(--muted); background: #ffffff; border: 1px solid var(--line); cursor: pointer; font-size: 12px; }
+.format-switch label.selected { color: var(--blue); border-color: var(--blue); }
+.format-switch input { width: 14px; min-height: auto; accent-color: var(--blue); }
+.editor-hint { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.cover-preview { display: grid; width: 170px; aspect-ratio: 4 / 5.6; overflow: hidden; background: #e5e8e7; place-items: center; }
+.cover-preview img { width: 100%; height: 100%; object-fit: cover; }
+.cover-placeholder { display: grid; gap: 10px; justify-items: center; color: #7b8490; font-size: 11px; }
+.cover-placeholder svg { width: 23px; height: 23px; }
+.upload-control { display: inline-flex; width: fit-content; gap: 8px; align-items: center; margin-top: 9px; padding: 9px 0; color: var(--blue); cursor: pointer; font-size: 12px; font-weight: 700; }
+.upload-control:hover { color: var(--blue-dark); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+.book-content-input { width: 100%; min-height: 180px; resize: vertical; padding: 11px; color: var(--ink); background: #ffffff; border: 1px solid var(--line); border-radius: 0; font: inherit; font-size: 13px; line-height: 1.55; }
+.editor-error { grid-column: 1 / -1; margin: 0; padding: 12px; color: #8b352b; background: #fff0ed; border-left: 2px solid var(--coral); font-size: 13px; }
+.editor-actions { display: flex; grid-column: 1 / -1; gap: 10px; justify-content: flex-end; padding-top: 19px; border-top: 1px solid var(--line); }
+.editor-cancel, .editor-save { display: inline-flex; min-height: 42px; gap: 10px; align-items: center; padding: 0 15px; cursor: pointer; font-size: 12px; font-weight: 700; }
+.editor-cancel { color: var(--ink); background: transparent; border: 1px solid var(--line); }
+.editor-save { color: #ffffff; background: var(--blue); }
+.editor-save:hover:not(:disabled) { background: var(--blue-dark); }
+.editor-save:disabled { opacity: 0.65; cursor: wait; }
+.book-editor-state { display: grid; min-height: 45vh; padding: 32px; place-content: center; justify-items: center; color: var(--muted); text-align: center; }
+.book-editor-state a { margin-top: 12px; color: var(--blue); font-size: 13px; }
+.book-editor-state .loading-mark { width: 26px; height: 26px; }
 
-.edit-book h2 {
-  margin-bottom: 20px;
-}
-
-.edit-book form {
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.edit-book input,
-.edit-book select {
-  padding: 10px;
-  background: #2b2b2b;
-  color: white;
-  border: 1px solid #444;
-  border-radius: 6px;
-  outline: none;
-}
-
-.edit-book input::placeholder {
-  color: #aaa;
-}
-
-.edit-book button {
-  padding: 10px;
-  margin-top: 10px;
-  background: #e50914;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.edit-book button:hover {
-  background: #f6121d;
-}
-
-.edit-preview {
-  width: 120px;
-  margin-top: 10px;
-  border-radius: 6px;
-}
-@media (max-width:768px){
-
-  .edit-book{
-    padding: 20px;
-  }
-
+@media (max-width: 760px) {
+  .book-editor-page { padding: 22px 17px 48px; }
+  .book-editor-heading { padding: 32px 0 24px; }
+  .book-editor-heading h1 { font-size: 42px; }
+  .book-editor-form { grid-template-columns: 1fr; row-gap: 34px; }
+  .editor-aside { padding-top: 25px; border-top: 1px solid var(--line); }
+  .editor-actions { justify-content: stretch; }
+  .editor-cancel, .editor-save { flex: 1; justify-content: center; }
 }

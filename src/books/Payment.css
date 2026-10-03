@@ -1,25 +1,30 @@
-.payment-page{
-background:#141414;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-color:white;
-}
+.payment-page { min-height: calc(100vh - var(--header-height)); padding: 26px 38px 70px; color: var(--ink); background: #f1f2ee; }
+.payment-topline { display: flex; align-items: center; justify-content: space-between; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.payment-topline a, .payment-topline > span { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: 11px; text-decoration: none; }
+.payment-topline a:hover { color: var(--blue); }
+.payment-layout { display: grid; max-width: 1120px; min-height: 560px; grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr); margin: 65px auto 0; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--line); }
+.payment-story { display: flex; padding: 50px 60px 45px 0; flex-direction: column; justify-content: center; }
+.payment-story > .pointillist-scene { opacity: 0.17; }
+.payment-story h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 76px; font-weight: 400; line-height: 0.94; }
+.payment-story h1 em { color: var(--blue); font-weight: 400; }
+.payment-story > p:not(.dashboard-kicker) { max-width: 450px; margin: 21px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.payment-title-line { display: grid; gap: 5px; margin-top: 42px; padding-top: 13px; border-top: 1px solid var(--line); }
+.payment-title-line span { color: var(--muted); font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; }
+.payment-title-line strong { max-width: 480px; overflow-wrap: anywhere; font-family: Georgia, "Times New Roman", serif; font-size: 20px; font-weight: 400; }
+.payment-checkout { align-self: center; padding: 30px; background: #ffffff; border: 1px solid var(--line); }
+.payment-secure { display: flex; gap: 8px; align-items: center; margin: -30px -30px 27px; padding: 12px 15px; color: #64532d; background: #f6f1e2; font-size: 11px; }
+.payment-checkout > .dashboard-kicker { margin-bottom: 7px; }
+.payment-checkout h2 { margin: 0 0 24px; font-family: Georgia, "Times New Roman", serif; font-size: 31px; font-weight: 400; }
+.payment-line { display: flex; justify-content: space-between; gap: 15px; padding: 14px 0; color: var(--muted); border-top: 1px solid var(--line); font-size: 12px; }
+.payment-line strong { color: var(--ink); font-weight: 650; }
+.payment-total { margin-top: 4px; color: var(--ink); border-bottom: 1px solid var(--line); font-size: 13px; }
+.payment-total strong { font-family: Georgia, "Times New Roman", serif; font-size: 26px; font-weight: 400; }
+.payment-disclaimer { margin: 16px 0; padding-left: 10px; color: var(--muted); border-left: 2px solid var(--coral); font-size: 11px; line-height: 1.55; }
+.payment-activate, .payment-continue { display: flex; width: 100%; min-height: 44px; gap: 10px; align-items: center; justify-content: space-between; margin-top: 13px; padding: 0 13px; color: #ffffff; background: var(--blue); cursor: pointer; font-size: 12px; font-weight: 700; }
+.payment-activate:hover, .payment-continue:hover { background: var(--blue-dark); }
+.payment-success { display: flex; gap: 9px; align-items: center; margin-top: 13px; padding: 11px; color: #164b45; background: #e6f3ef; border: 1px solid #b7d8d0; font-size: 12px; }
+.payment-cancel { display: block; width: fit-content; margin: 17px auto 0; color: var(--muted); font-size: 11px; text-decoration: none; }
+.payment-cancel:hover { color: var(--blue); }
 
-.payment-box{
-background:#1f1f1f;
-padding:30px;
-border-radius:6px;
-text-align:center;
-}
-
-.payment-box button{
-margin-top:15px;
-padding:10px 20px;
-border:none;
-background:#e50914;
-color:white;
-cursor:pointer;
-border-radius:4px;
-}
+@media (max-width: 820px) { .payment-page { padding: 22px 20px 46px; } .payment-layout { grid-template-columns: 1fr; margin-top: 33px; } .payment-story { padding: 38px 0 28px; } .payment-story h1 { font-size: 62px; } .payment-title-line { margin-top: 24px; } .payment-checkout { margin: 0 0 24px; } }
+@media (max-width: 520px) { .payment-page { padding: 19px 15px 35px; } .payment-story h1 { font-size: 55px; } .payment-checkout { padding: 23px 18px; } .payment-secure { margin: -23px -18px 23px; } }
