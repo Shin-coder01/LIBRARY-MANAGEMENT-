@@ -10,14 +10,12 @@ function Layout() {
 
   return (
     <div className="app-container">
-      <Navbar setOpen={setOpen} search={search} setSearch={setSearch} />
-
+      <Navbar isMenuOpen={open} setOpen={setOpen} search={search} setSearch={setSearch} />
       <div className="layout">
-        <Sidebar open={open} />
-
-        <div className={`content ${open ? "shift" : ""}`}>
+        <Sidebar open={open} onClose={() => setOpen(false)} />
+        <main className={`content ${open ? "shift" : ""}`}>
           <Outlet context={{ search }} />
-        </div>
+        </main>
       </div>
     </div>
   );

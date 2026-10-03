@@ -1,13 +1,17 @@
+.app-container { min-height: 100vh; background: var(--paper); }
+
 .content {
-  padding: 20px 30px;
-  background: #141414;
-  min-height: calc(100vh - 70px);
   width: 100%;
-  margin-top: 70px;
-  box-sizing: border-box;
+  min-height: 100vh;
+  padding-top: var(--header-height);
+  transition: margin-left 260ms ease, width 260ms ease;
 }
 
 .content.shift {
-  margin-left: 240px;
-  width: calc(100% - 240px);
+  width: calc(100% - var(--sidebar-width));
+  margin-left: var(--sidebar-width);
+}
+
+@media (max-width: 820px) {
+  .content.shift { width: 100%; margin-left: 0; }
 }

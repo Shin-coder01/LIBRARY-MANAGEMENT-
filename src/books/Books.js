@@ -1,188 +1,260 @@
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import axios from "axios";
+import { FiArrowUpRight, FiBookOpen, FiCheck, FiEdit3, FiHeart, FiRefreshCw } from "react-icons/fi";
 import "./Books.css";
 
-function Books(){
+const categories = ["Romance", "Adventure", "Mystery", "Self Help", "Fantasy", "Sci-Fi", "Business", "Classic", "Finance"];
 
-const { search = "" } = useOutletContext() || {};
-const navigate = useNavigate();
-const user = JSON.parse(localStorage.getItem("user")) || {};
-
-
-/* DEFAULT BOOKS */
-const defaultBooks = [
-{title:"Failing Light",author:"Carter Woods",category:"Adventure",type:"physical",image:"https://m.media-amazon.com/images/I/81eB+7+CkUL.jpg", total:2, available:2},
-{title:"The Long Blackout",author:"Robert J. Walker",category:"Mystery",type:"physical",image:"https://m.media-amazon.com/images/I/91HHqVTAJQL.jpg", total:2, available:2},
-{title:"And Then He Pressed Play",author:"Robert Halliwell",category:"Romance",type:"physical",image:"https://m.media-amazon.com/images/I/81WcnNQ-TBL.jpg", total:2, available:2},
-{title:"Atomic Habits",author:"James Clear",category:"Self Help",type:"virtual",image:"https://m.media-amazon.com/images/I/91bYsX41DVL.jpg"},
-{title:"The Alchemist",author:"Paulo Coelho",category:"Adventure",type:"physical",image:"https://m.media-amazon.com/images/I/71aFt4+OTOL.jpg", total:3, available:3},
-{title:"Rich Dad Poor Dad",author:"Robert Kiyosaki",category:"Finance",type:"physical",image:"https://m.media-amazon.com/images/I/81bsw6fnUiL.jpg", total:2, available:2},
-{title:"The Psychology of Money",author:"Morgan Housel",category:"Finance",type:"virtual",image:"https://m.media-amazon.com/images/I/71g2ednj0JL.jpg"},
-{title:"Harry Potter",author:"J.K. Rowling",category:"Fantasy",type:"virtual",image:"https://m.media-amazon.com/images/I/81YOuOGFCJL.jpg"},
-{title:"The Hobbit",author:"J.R.R. Tolkien",category:"Fantasy",type:"physical",image:"https://m.media-amazon.com/images/I/91b0C2YNSrL.jpg", total:2, available:2},
-{title:"The Notebook",author:"Nicholas Sparks",category:"Romance",type:"physical",image:"https://m.media-amazon.com/images/I/81bGKUa1e0L.jpg", total:2, available:2},
-{title:"The Great Gatsby",author:"F. Scott Fitzgerald",category:"Classic",type:"virtual",image:"https://m.media-amazon.com/images/I/81af+MCATTL.jpg"},
-{title:"1984",author:"George Orwell",category:"Classic",type:"physical",image:"https://m.media-amazon.com/images/I/71kxa1-0mfL.jpg", total:2, available:2},
-{title:"Animal Farm",author:"George Orwell",category:"Classic",type:"physical",image:"https://m.media-amazon.com/images/I/91VokXkn8hL.jpg", total:2, available:2},
-{title:"The Power of Now",author:"Eckhart Tolle",category:"Self Help",type:"virtual",image:"https://m.media-amazon.com/images/I/71E8VNPC1dL.jpg"},
-{title:"Deep Work",author:"Cal Newport",category:"Self Help",type:"virtual",image:"https://m.media-amazon.com/images/I/71m-MxdJ2WL.jpg"},
-{title:"Zero to One",author:"Peter Thiel",category:"Business",type:"physical",image:"https://m.media-amazon.com/images/I/71uAI28kJuL.jpg", total:2, available:2},
-{title:"The Lean Startup",author:"Eric Ries",category:"Business",type:"physical",image:"https://m.media-amazon.com/images/I/81-QB7nDh4L.jpg", total:2, available:2},
-{title:"Ready Player One",author:"Ernest Cline",category:"Sci-Fi",type:"virtual",image:"https://m.media-amazon.com/images/I/81WcnNQ-TBL.jpg"},
-{title:"It Ends With Us",author:"Colleen Hoover",category:"Romance",type:"physical",image:"https://m.media-amazon.com/images/I/81s0B6NYXML.jpg", total:2, available:2},
-{title:"Verity",author:"Colleen Hoover",category:"Romance",type:"virtual",image:"https://m.media-amazon.com/images/I/91dSMhdIzTL.jpg"}
-];
-
-let books = JSON.parse(localStorage.getItem("books")) || defaultBooks;
-localStorage.setItem("books", JSON.stringify(books));
-
-const categories=["Romance","Adventure","Mystery","Self Help","Fantasy","Sci-Fi","Business","Classic","Finance"];
-
-/* READ */
-const readBook=(book)=>{
-const issued=JSON.parse(localStorage.getItem("virtualBooks"))||{};
-issued[book.title]={start:Date.now()};
-localStorage.setItem("virtualBooks",JSON.stringify(issued));
-navigate(`/reader/${book.title}`);
+const readStoredValue = (key, fallback) => {
+  try {
+    return JSON.parse(localStorage.getItem(key)) || fallback;
+  } catch {
+    return fallback;
+  }
 };
 
-const isReading=(book)=>{
-const issued=JSON.parse(localStorage.getItem("virtualBooks"))||{};
-return issued[book.title];
-};
+function Books() {
+  const { search = "" } = useOutletContext() || {};
+  const navigate = useNavigate();
+  const user = readStoredValue("user", {});
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [favorites, setFavorites] = useState(() => readStoredValue("favorites", []));
+  const [notice, setNotice] = useState("");
+  const [borrowingId, setBorrowingId] = useState(null);
 
-const getDaysLeft=(book)=>{
-const issued=JSON.parse(localStorage.getItem("virtualBooks"))||{};
-if(!issued[book.title]) return null;
-const days=Math.floor((Date.now()-issued[book.title].start)/(1000*60*60*24));
-return 15 - days;
-};
+  const fetchBooks = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const response = await axios.get("http://localhost:8080/api/books");
+      setBooks(Array.isArray(response.data) ? response.data : []);
+    } catch {
+      setError("The catalogue could not be reached. Start the library server and try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-/* CHECKOUT */
-const checkoutBook=(book)=>{
-let storedBooks = JSON.parse(localStorage.getItem("books")) || [];
-const borrowed=JSON.parse(localStorage.getItem("borrowedBooks"))||[];
+  useEffect(() => {
+    fetchBooks();
+  }, []);
 
-if(borrowed.find(b=>b.title===book.title)){
-alert("Already borrowed");
-return;
-}
+  const filteredBooks = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    return books.filter((book) => {
+      const matchesSearch = !query || [book.title, book.author, book.category]
+        .filter(Boolean)
+        .some((value) => value.toLowerCase().includes(query));
+      return matchesSearch && (activeCategory === "All" || book.category === activeCategory);
+    });
+  }, [activeCategory, books, search]);
 
-storedBooks = storedBooks.map(b=>{
-if(b.title===book.title){
-if(b.available<=0){
-alert("Out of stock");
-return b;
-}
-return {...b, available:b.available-1};
-}
-return b;
-});
+  const orderedCategories = useMemo(() => {
+    const discovered = books.map((book) => book.category).filter(Boolean);
+    return [...new Set([...categories, ...discovered])].filter((category) =>
+      filteredBooks.some((book) => book.category === category)
+    );
+  }, [books, filteredBooks]);
 
-localStorage.setItem("books", JSON.stringify(storedBooks));
+  const physicalCopies = books
+    .filter((book) => book.type === "physical")
+    .reduce((total, book) => total + Number(book.available || 0), 0);
+  const digitalTitles = books.filter((book) => book.type === "virtual").length;
 
-borrowed.push({title:book.title,author:book.author,start:Date.now()});
-localStorage.setItem("borrowedBooks",JSON.stringify(borrowed));
+  const isReading = (book) => Boolean(readStoredValue("virtualBooks", {})[book.title]);
 
-alert("Book borrowed");
-};
+  const getDaysLeft = (book) => {
+    const started = readStoredValue("virtualBooks", {})[book.title]?.start;
+    if (!started) return null;
+    const elapsedDays = Math.floor((Date.now() - started) / (1000 * 60 * 60 * 24));
+    return Math.max(0, 15 - elapsedDays);
+  };
 
-const getBorrowDaysLeft=(book)=>{
-const borrowed=JSON.parse(localStorage.getItem("borrowedBooks"))||[];
-const found=borrowed.find(b=>b.title===book.title);
-if(!found) return null;
-const days=Math.floor((Date.now()-found.start)/(1000*60*60*24));
-return 90 - days;
-};
+  const getBorrowDaysLeft = (book) => {
+    const borrowed = readStoredValue("borrowedBooks", []);
+    const found = borrowed.find((item) => item.id === book.id);
+    if (!found) return null;
+    const elapsedDays = Math.floor((Date.now() - found.start) / (1000 * 60 * 60 * 24));
+    return Math.max(0, 90 - elapsedDays);
+  };
 
-/* FAVORITE */
-const addFavorite=(book)=>{
-const fav=JSON.parse(localStorage.getItem("favorites"))||[];
-if(!fav.find(b=>b.title===book.title)){
-fav.push(book);
-localStorage.setItem("favorites",JSON.stringify(fav));
-alert("Added to favorites");
-}else{
-alert("Already in favorites");
-}
-};
+  const readBook = (book) => {
+    const issued = readStoredValue("virtualBooks", {});
+    issued[book.title] = issued[book.title] || { start: Date.now() };
+    localStorage.setItem("virtualBooks", JSON.stringify(issued));
+    navigate(`/reader/${book.title}`);
+  };
 
-const searchFilter=books.filter(book=>
-book.title.toLowerCase().includes(search.toLowerCase()) ||
-book.author.toLowerCase().includes(search.toLowerCase())
-);
+  const checkoutBook = async (book) => {
+    if (book.available <= 0 || borrowingId) return;
+    setBorrowingId(book.id);
+    try {
+      const updatedBook = { ...book, available: book.available - 1 };
+      await axios.put(`http://localhost:8080/api/books/${book.id}`, updatedBook);
+      setBooks((current) => current.map((item) => item.id === book.id ? updatedBook : item));
+      const borrowed = readStoredValue("borrowedBooks", []);
+      localStorage.setItem("borrowedBooks", JSON.stringify([...borrowed, {
+        id: book.id,
+        title: book.title,
+        author: book.author,
+        start: Date.now()
+      }]));
+      setNotice(`"${book.title}" is now in your library.`);
+    } catch {
+      setNotice("We could not complete that checkout. Please try again.");
+    } finally {
+      setBorrowingId(null);
+    }
+  };
 
-return(
-<div className="books-page">
+  const toggleFavorite = (book) => {
+    const isSaved = favorites.some((item) => item.id === book.id || item.title === book.title);
+    const next = isSaved
+      ? favorites.filter((item) => item.id !== book.id && item.title !== book.title)
+      : [...favorites, book];
+    setFavorites(next);
+    localStorage.setItem("favorites", JSON.stringify(next));
+    setNotice(isSaved ? `Removed "${book.title}" from your saved shelf.` : `Saved "${book.title}" for later.`);
+  };
 
-{categories
-.filter(cat=>searchFilter.some(book=>book.category===cat))
-.map(cat=>(
+  const actionFor = (book) => {
+    if (book.type === "virtual") {
+      if (isReading(book)) {
+        const daysLeft = getDaysLeft(book);
+        return daysLeft > 0
+          ? { label: `Continue reading - ${daysLeft}d left`, onClick: () => navigate(`/reader/${book.title}`) }
+          : user.role === "admin"
+            ? { label: "Continue reading", onClick: () => readBook(book) }
+            : { label: "Reading period ended", onClick: () => navigate(`/payment/${book.title}`), muted: true };
+      }
+      return { label: "Start reading", onClick: () => readBook(book) };
+    }
 
-<div className="books-section" key={cat}>
-<h2>{cat}</h2>
+    const daysLeft = getBorrowDaysLeft(book);
+    if (daysLeft !== null) return { label: `On loan - ${daysLeft}d left`, disabled: true, muted: true };
+    if (!["student", "admin"].includes(user.role)) return { label: "Sign in to borrow", onClick: () => navigate("/login"), muted: true };
+    if (book.available <= 0) return { label: "All copies on loan", disabled: true, muted: true };
+    return { label: borrowingId === book.id ? "Checking out..." : "Borrow this book", onClick: () => checkoutBook(book), disabled: borrowingId === book.id };
+  };
 
-<div className="book-row">
+  if (loading) {
+    return <div className="books-state"><div className="loading-mark" /><p>Opening the catalogue</p></div>;
+  }
 
-{searchFilter
-.filter(book=>book.category===cat)
-.map((book,index)=>(
+  if (error) {
+    return (
+      <div className="books-state books-error">
+        <p>{error}</p>
+        <button type="button" className="text-action" onClick={fetchBooks}><FiRefreshCw /> Retry</button>
+      </div>
+    );
+  }
 
-<div className="book-card" key={index}>
+  return (
+    <div className="books-page">
+      <section className="catalogue-intro" aria-labelledby="catalogue-heading">
+        <div>
+          <p className="eyebrow"><span /> Curated collection</p>
+          <h1 id="catalogue-heading">Find a book.<br /><em>Keep the feeling.</em></h1>
+          <p className="catalogue-copy">A considered collection for quiet afternoons, sharp questions, and everything in between.</p>
+        </div>
+        <div className="catalogue-summary" aria-label="Catalogue summary">
+          <div><strong>{books.length}</strong><span>titles</span></div>
+          <div><strong>{physicalCopies}</strong><span>copies ready</span></div>
+          <div><strong>{digitalTitles}</strong><span>digital reads</span></div>
+        </div>
+      </section>
 
-<div className="book-image">
-<img src={book.image} alt={book.title}/>
-<div className="fav-icon" onClick={()=>addFavorite(book)}>❤</div>
-</div>
+      <section className="catalogue-controls" aria-label="Catalogue filters">
+        <div className="catalogue-result">
+          <span>Browse the shelves</span>
+          <strong>{filteredBooks.length} {filteredBooks.length === 1 ? "result" : "results"}</strong>
+        </div>
+        <div className="category-tabs" role="tablist" aria-label="Filter by category">
+          <button type="button" role="tab" aria-selected={activeCategory === "All"} className={activeCategory === "All" ? "active" : ""} onClick={() => setActiveCategory("All")}>All</button>
+          {categories.filter((category) => books.some((book) => book.category === category)).map((category) => (
+            <button key={category} type="button" role="tab" aria-selected={activeCategory === category} className={activeCategory === category ? "active" : ""} onClick={() => setActiveCategory(category)}>{category}</button>
+          ))}
+        </div>
+      </section>
 
-<h4>{book.title}</h4>
-<p>{book.author}</p>
+      {notice && (
+        <div className="catalogue-notice" role="status">
+          <FiCheck aria-hidden="true" />
+          <span>{notice}</span>
+          <button type="button" aria-label="Dismiss notification" onClick={() => setNotice("")}>x</button>
+        </div>
+      )}
 
-{book.type==="physical"
-? <p>Available: {book.available} / {book.total}</p>
-: <p style={{visibility:"hidden"}}>.</p>}
-
-<div className="book-buttons">
-
-{/* BOTH ADMIN + STUDENT */}
-{(user.role==="student" || user.role==="admin") && book.type==="virtual" && (
-isReading(book)
-? (getDaysLeft(book)>0
-? <button onClick={()=>navigate(`/reader/${book.title}`)}>
-    Continue ({getDaysLeft(book)} days)
-  </button>
-: user.role==="admin"
-  ? <button onClick={()=>readBook(book)}>Continue</button>
-  : <button onClick={()=>navigate(`/payment/${book.title}`)}>Expired</button>)
-: <button onClick={()=>readBook(book)}>Read</button>
-)}
-
-{(user.role==="student" || user.role==="admin") && book.type==="physical" && (
-getBorrowDaysLeft(book)
-? <button disabled>{getBorrowDaysLeft(book)} days left</button>
-: book.available>0
-? <button onClick={()=>checkoutBook(book)}>Checkout</button>
-: <button disabled>Out of Stock</button>
-)}
-
-{/* ADMIN ONLY */}
-{user.role==="admin" && (
-<button onClick={()=>navigate(`/edit-book/${index}`)}>
-Edit
-</button>
-)}
-
-</div>
-
-</div>
-
-))}
-
-</div>
-</div>
-))}
-
-</div>
-);
+      {filteredBooks.length === 0 ? (
+        <section className="catalogue-empty">
+          <FiBookOpen aria-hidden="true" />
+          <h2>No books on this shelf yet.</h2>
+          <p>Try another search or browse the full catalogue.</p>
+          <button type="button" className="text-action" onClick={() => setActiveCategory("All")}>Show all books <FiArrowUpRight /></button>
+        </section>
+      ) : (
+        <div className="catalogue-shelves">
+          {orderedCategories.map((category) => {
+            const categoryBooks = filteredBooks.filter((book) => book.category === category);
+            return (
+              <section className="books-section" key={category} aria-labelledby={`category-${category}`}>
+                <header className="shelf-heading">
+                  <h2 id={`category-${category}`}>{category}</h2>
+                  <span>{String(categoryBooks.length).padStart(2, "0")} titles</span>
+                </header>
+                <div className="book-row">
+                  {categoryBooks.map((book, index) => {
+                    const action = actionFor(book);
+                    const isFavorite = favorites.some((item) => item.id === book.id || item.title === book.title);
+                    return (
+                      <article className="book-card" key={book.id || `${book.title}-${index}`}>
+                        <div className="book-cover-wrap">
+                          <img className="book-cover" src={book.image} alt={`Cover of ${book.title}`} />
+                          <button
+                            type="button"
+                            className={`favorite-button ${isFavorite ? "saved" : ""}`}
+                            aria-label={isFavorite ? `Remove ${book.title} from saved books` : `Save ${book.title}`}
+                            aria-pressed={isFavorite}
+                            title={isFavorite ? "Remove from saved books" : "Save for later"}
+                            onClick={() => toggleFavorite(book)}
+                          >
+                            <FiHeart aria-hidden="true" />
+                          </button>
+                          <span className="book-format">{book.type === "physical" ? "Print" : "Digital"}</span>
+                        </div>
+                        <div className="book-details">
+                          <p className="book-author">{book.author || "Unknown author"}</p>
+                          <h3 title={book.title}>{book.title}</h3>
+                          <p className="book-availability">
+                            {book.type === "physical" ? `${book.available || 0} of ${book.total || 0} copies available` : "Read in your browser"}
+                          </p>
+                        </div>
+                        <div className="book-actions">
+                          <button type="button" className={`book-primary ${action.muted ? "muted" : ""}`} onClick={action.onClick} disabled={action.disabled}>
+                            <span>{action.label}</span><FiArrowUpRight aria-hidden="true" />
+                          </button>
+                          {user.role === "admin" && (
+                            <button type="button" className="book-edit" aria-label={`Edit ${book.title}`} title="Edit book" onClick={() => navigate(`/edit-book/${book.id}`)}>
+                              <FiEdit3 aria-hidden="true" />
+                            </button>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default Books;

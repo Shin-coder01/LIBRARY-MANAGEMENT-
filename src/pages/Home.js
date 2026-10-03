@@ -1,60 +1,36 @@
 import { useNavigate } from "react-router-dom";
+import { FiArrowUpRight, FiBookOpen } from "react-icons/fi";
 import "./Home.css";
 
 function Home() {
-
   const navigate = useNavigate();
 
   return (
-
-    <div className="home">
-
-     
-      <div className="top-bar">
-        <button
-          className="explore-btn"
-          onClick={() => navigate("/books")}
-        >
-          Explore Books
+    <main className="home">
+      <header className="home-header">
+        <span className="home-brand">BIBLIOTHECA<span>.</span></span>
+        <button type="button" className="home-catalogue-link" onClick={() => navigate("/books")}>
+          Browse catalogue <FiArrowUpRight aria-hidden="true" />
         </button>
-      </div>
-
-      <div className="home-overlay">
-
-        <div className="home-content">
-
-          <h1>Library Management System</h1>
-
-          <p>
-            Manage books, issue records, and your digital library easily.
-          </p>
-
-          <div className="home-buttons">
-
-            <button
-              className="home-btn"
-              onClick={() => navigate("/login")}
-            >
-              Sign In
-            </button>
-
-            <button
-              className="home-btn secondary"
-              onClick={() => navigate("/register")}
-            >
-              Register
-            </button>
-
-          </div>
-
+      </header>
+      <div className="home-shade" />
+      <section className="home-content">
+        <p className="home-eyebrow"><span /> Your digital reading room</p>
+        <h1>Stories wait.<br /><em>Start anywhere.</em></h1>
+        <p className="home-intro">Borrow physical books, settle in with a digital read, and keep every chapter close.</p>
+        <div className="home-buttons">
+          <button type="button" className="home-primary" onClick={() => navigate("/login")}>Enter the library <FiArrowUpRight aria-hidden="true" /></button>
+          <button type="button" className="home-secondary" onClick={() => navigate("/register")}>Create an account</button>
         </div>
-
-      </div>
-
-    </div>
-
-  )
-
+      </section>
+      <footer className="home-footer">
+        <span>01 / 01</span>
+        <span className="home-footer-line" />
+        <span>Library management, made human</span>
+        <FiBookOpen aria-hidden="true" />
+      </footer>
+    </main>
+  );
 }
 
 export default Home;

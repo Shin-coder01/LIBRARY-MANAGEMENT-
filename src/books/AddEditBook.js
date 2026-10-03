@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "./AddEditBook.css";
 
 function AddEditBook() {
@@ -17,28 +18,33 @@ function AddEditBook() {
   const [type, setType] = useState("");
   const [image, setImage] = useState("");
   const [total, setTotal] = useState("");
+  const [loading, setLoading] = useState(isEdit);
+  const [error, setError] = useState(null);
 
   // ✅ useEffect MUST be before any return
   useEffect(() => {
 
     if (isEdit) {
-      const books = JSON.parse(localStorage.getItem("books")) || [];
-      const book = books[id];
-
-      if (!book) {
-        navigate("/books");
-        return;
-      }
-
-      setTitle(book.title);
-      setAuthor(book.author);
-      setCategory(book.category);
-      setType(book.type);
-      setImage(book.image || "");
-      setTotal(book.total || "");
+      const fetchBook = async () => {
+        try {
+          const response = await axios.get(`http://localhost:8080/api/books/${id}`);
+          const book = response.data;
+          setTitle(book.title);
+          setAuthor(book.author);
+          setCategory(book.category);
+          setType(book.type);
+          setImage(book.image || "");
+          setTotal(book.total || "");
+        } catch (err) {
+          setError('Failed to fetch book');
+        } finally {
+          setLoading(false);
+        }
+      };
+      fetchBook();
     }
 
-  }, [id, isEdit, navigate]);
+  }, [id, isEdit]);
 
   // ✅ AFTER hooks → admin check
   if(user.role !== "admin"){
@@ -56,15 +62,13 @@ function AddEditBook() {
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title || !author || !category || !type) {
       alert("Fill all fields");
       return;
     }
-
-    let books = JSON.parse(localStorage.getItem("books")) || [];
 
     const newBook = {
       title,
@@ -78,18 +82,22 @@ function AddEditBook() {
       })
     };
 
-    if (isEdit) {
-      books[id] = newBook;
-      alert("Book updated");
-    } else {
-      books.push(newBook);
-      alert("Book added");
+    try {
+      if (isEdit) {
+        await axios.put(`http://localhost:8080/api/books/${id}`, newBook);
+        alert("Book updated");
+      } else {
+        await axios.post('http://localhost:8080/api/books', newBook);
+        alert("Book added");
+      }
+      navigate("/books");
+    } catch (err) {
+      alert("Failed to save book");
     }
-
-    localStorage.setItem("books", JSON.stringify(books));
-
-    navigate("/books");
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
 
