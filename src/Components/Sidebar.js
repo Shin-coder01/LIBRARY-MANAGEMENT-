@@ -27,8 +27,15 @@ function Sidebar({ open, onClose }) {
 
   return (
     <>
-      {open && <button className="sidebar-scrim" type="button" aria-label="Close menu" onClick={onClose} />}
-      <aside className={`sidebar ${open ? "open" : ""}`} aria-label="Library navigation">
+      <button
+        className={`sidebar-scrim ${open ? "visible" : ""}`}
+        type="button"
+        aria-label="Close menu"
+        aria-hidden={!open}
+        tabIndex={open ? 0 : -1}
+        onClick={onClose}
+      />
+      <aside id="library-navigation" className={`sidebar ${open ? "open" : ""}`} aria-label="Library navigation" aria-hidden={!open} inert={!open}>
         <div className="sidebar-heading">
           <span>Workspace</span>
           <span className="sidebar-role">{user.role || "reader"}</span>

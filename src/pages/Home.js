@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiArrowLeft, FiArrowRight, FiArrowUpRight, FiBookOpen } from "react-icons/fi";
 import PointillistScene from "../Components/PointillistScene";
@@ -15,8 +15,27 @@ const readingWorlds = [
 
 function Home() {
   const navigate = useNavigate();
+  const homeRef = useRef(null);
   const [worldIndex, setWorldIndex] = useState(0);
   const world = readingWorlds[worldIndex];
+
+  const handlePointerMove = (event) => {
+    if (event.pointerType !== "mouse" || !homeRef.current) return;
+    const bounds = homeRef.current.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
+    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
+    homeRef.current.style.setProperty("--scene-shift-x", `${-x * 8}px`);
+    homeRef.current.style.setProperty("--scene-shift-y", `${-y * 6}px`);
+    homeRef.current.style.setProperty("--scene-rotate-x", `${y * 0.6}deg`);
+    homeRef.current.style.setProperty("--scene-rotate-y", `${-x * 0.6}deg`);
+  };
+
+  const resetPointer = () => {
+    homeRef.current?.style.setProperty("--scene-shift-x", "0px");
+    homeRef.current?.style.setProperty("--scene-shift-y", "0px");
+    homeRef.current?.style.setProperty("--scene-rotate-x", "0deg");
+    homeRef.current?.style.setProperty("--scene-rotate-y", "0deg");
+  };
 
   useEffect(() => {
     const move = (event) => {
@@ -37,7 +56,7 @@ function Home() {
   const openWorld = () => navigate("/books", { state: { category: world.category } });
 
   return (
-    <main className="home pointillist-host">
+    <main ref={homeRef} className="home pointillist-host" onPointerMove={handlePointerMove} onPointerLeave={resetPointer}>
       <PointillistScene variant={world.variant} progress={worldIndex / (readingWorlds.length - 1)} />
       <header className="home-header">
         <span className="home-brand">BIBLIOTHECA<span>.</span></span>
@@ -45,7 +64,7 @@ function Home() {
           All books <FiArrowUpRight aria-hidden="true" />
         </button>
       </header>
-      <section className="home-content">
+      <section key={world.category} className="home-content">
         <p className="home-eyebrow"><span /> Reading world {String(worldIndex + 1).padStart(2, "0")} / 06 <i /></p>
         <h1>{world.title}<br /><em>{world.category}.</em></h1>
         <p className="home-intro">{world.line} Browse the collection, borrow a print edition, or settle in with a digital read.</p>

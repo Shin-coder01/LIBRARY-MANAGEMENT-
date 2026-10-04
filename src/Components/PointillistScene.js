@@ -25,13 +25,9 @@ function PointillistScene({ variant = "atlas", progress = 0, className = "" }) {
     if (!canvas || !parent || !context) return undefined;
 
     const palette = palettes[variant] || palettes.atlas;
-    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let width = 0;
     let height = 0;
     let pixelRatio = 1;
-    let frame = 0;
-    let visible = true;
-    let lastFrame = 0;
 
     const dot = (x, y, color, alpha = 0.7, radius = 1.2) => {
       context.globalAlpha = alpha;
@@ -126,11 +122,11 @@ function PointillistScene({ variant = "atlas", progress = 0, className = "" }) {
       }
     };
 
-    const render = (time = 0) => {
+    const render = () => {
       if (!width || !height) return;
       context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
       context.clearRect(0, 0, width, height);
-      const phase = reducedMotion ? 0 : time * 0.0006;
+      const phase = 0;
 
       for (let zone = 0; zone < 6; zone += 1) drawWorld(zone, phase);
 
@@ -156,45 +152,12 @@ function PointillistScene({ variant = "atlas", progress = 0, className = "" }) {
       render();
     };
 
-    const tick = (time) => {
-      frame = 0;
-      if (!visible || document.hidden) return;
-      if (time - lastFrame > 45) {
-        lastFrame = time;
-        render(time);
-      }
-      frame = window.requestAnimationFrame(tick);
-    };
-
-    const start = () => {
-      if (!frame && visible && !document.hidden && !reducedMotion) frame = window.requestAnimationFrame(tick);
-    };
-    const stop = () => {
-      if (frame) window.cancelAnimationFrame(frame);
-      frame = 0;
-    };
-
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(parent);
     resize();
-    start();
-    const handleVisibility = () => {
-      if (document.hidden) stop();
-      else start();
-    };
-    document.addEventListener("visibilitychange", handleVisibility);
-    const intersectionObserver = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      if (visible) start();
-      else stop();
-    });
-    intersectionObserver.observe(parent);
 
     return () => {
-      stop();
       resizeObserver.disconnect();
-      intersectionObserver.disconnect();
-      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [progress, variant]);
 

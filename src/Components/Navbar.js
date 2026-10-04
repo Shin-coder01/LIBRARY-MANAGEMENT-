@@ -1,8 +1,8 @@
 import { NavLink, useLocation } from "react-router-dom";
-import { FiBell, FiMenu, FiSearch } from "react-icons/fi";
+import { FiBell, FiMenu, FiSearch, FiX } from "react-icons/fi";
 import "./Navbar.css";
 
-function Navbar({ isMenuOpen, setOpen, search, setSearch }) {
+function Navbar({ isMenuOpen, setOpen, menuButtonRef, search, setSearch }) {
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem("user")) || {};
   const isCatalog = location.pathname === "/books";
@@ -11,13 +11,15 @@ function Navbar({ isMenuOpen, setOpen, search, setSearch }) {
   return (
     <header className="navbar">
       <button
+        ref={menuButtonRef}
         className="menu-btn"
         type="button"
         aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+        aria-controls="library-navigation"
         aria-expanded={isMenuOpen}
         onClick={() => setOpen((previous) => !previous)}
       >
-        <FiMenu aria-hidden="true" />
+        {isMenuOpen ? <FiX aria-hidden="true" /> : <FiMenu aria-hidden="true" />}
       </button>
       <NavLink to="/dashboard" className="logo" aria-label="Bibliotheca dashboard">
         BIBLIOTHECA<span>.</span>

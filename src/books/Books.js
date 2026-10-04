@@ -28,12 +28,15 @@ function Books() {
   const [favorites, setFavorites] = useState(() => readStoredValue("favorites", []));
   const [notice, setNotice] = useState("");
   const [borrowingId, setBorrowingId] = useState(null);
+  const [localCatalog, setLocalCatalog] = useState(false);
+  const [brokenCovers, setBrokenCovers] = useState({});
 
   const fetchBooks = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
       setBooks(await bookApi.list());
+      setLocalCatalog(bookApi.isLocalMode());
     } catch {
       setError("The catalogue could not be reached. Start the library server and try again.");
     } finally {
@@ -199,6 +202,13 @@ function Books() {
         </div>
       </section>
 
+      {localCatalog && (
+        <div className="catalogue-local-note" role="status">
+          <span><i aria-hidden="true" /> Browser-saved catalogue. Changes stay on this device while the library server is unavailable.</span>
+          <button type="button" title="Retry library server" aria-label="Retry library server" onClick={fetchBooks}><FiRefreshCw aria-hidden="true" /></button>
+        </div>
+      )}
+
       {notice && (
         <div className="catalogue-notice" role="status">
           <FiCheck aria-hidden="true" />
@@ -231,7 +241,11 @@ function Books() {
                     return (
                       <article className="book-card" key={book.id || `${book.title}-${index}`}>
                         <div className="book-cover-wrap">
-                          <img className="book-cover" src={book.image} alt={`Cover of ${book.title}`} />
+                          {book.image && !brokenCovers[book.id] ? (
+                            <img className="book-cover" src={book.image} alt={`Cover of ${book.title}`} onError={() => setBrokenCovers((current) => ({ ...current, [book.id]: true }))} />
+                          ) : (
+                            <div className="book-cover-placeholder" aria-label={`Cover unavailable for ${book.title}`}><FiBookOpen aria-hidden="true" /><span>{book.title}</span></div>
+                          )}
                           <button
                             type="button"
                             className={`favorite-button ${isFavorite ? "saved" : ""}`}

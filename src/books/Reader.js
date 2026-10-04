@@ -80,7 +80,7 @@ function Reader() {
         </div>
         <div className="reader-progress-wrap">
           <div className="reader-progress-label"><span>Saved progress</span><strong>{progress}%</strong></div>
-          <div className="reader-progress" role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100"><i style={{ width: `${progress}%` }} /></div>
+          <div className="reader-progress" role="progressbar" aria-valuenow={progress} aria-valuemin="0" aria-valuemax="100"><i style={{ transform: `scaleX(${progress / 100})` }} /></div>
         </div>
       </header>
 

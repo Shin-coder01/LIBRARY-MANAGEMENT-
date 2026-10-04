@@ -7,7 +7,7 @@
 
 .dashboard-actions { display: flex; gap: 9px; flex: 0 0 auto; align-items: center; }
 .dashboard-primary-action, .dashboard-focus button { display: inline-flex; min-height: 42px; align-items: center; gap: 10px; padding: 0 14px; color: #ffffff; background: var(--blue); cursor: pointer; font-size: 12px; font-weight: 700; transition: background 180ms ease, transform 180ms ease; }
-.dashboard-primary-action:hover, .dashboard-focus button:hover { background: var(--blue-dark); transform: translateY(-1px); }
+.dashboard-primary-action:hover, .dashboard-focus button:hover { background: var(--blue-dark); }
 .dashboard-icon-action { display: grid; width: 42px; height: 42px; padding: 0; color: var(--ink); background: #ffffff; border: 1px solid var(--line); place-items: center; cursor: pointer; }
 .dashboard-icon-action:hover { color: var(--blue); border-color: var(--blue); }
 
@@ -35,9 +35,13 @@
 .loan-summary-head h2 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 28px; font-weight: 400; }
 .loan-summary-head > span { padding-bottom: 4px; color: var(--blue); font-size: 12px; font-weight: 700; }
 .loan-scale { height: 7px; margin: 35px 0 20px; overflow: hidden; background: #e5e9ed; }
-.loan-scale i { display: block; height: 100%; background: var(--coral); transition: width 600ms ease; }
+.loan-scale i { display: block; height: 100%; background: var(--coral); }
 .dashboard-loan-summary > p { max-width: 380px; margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
 .dashboard-text-link { display: inline-flex; gap: 8px; align-items: center; margin-top: 21px; padding: 0 0 4px; color: var(--blue); background: transparent; border-bottom: 1px solid currentColor; cursor: pointer; font-size: 12px; font-weight: 700; }
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .dashboard-primary-action:hover, .dashboard-focus button:hover { transform: translateY(-1px); }
+}
 
 @media (max-width: 1000px) {
   .dashboard-page { padding-right: 26px; padding-left: 26px; }
