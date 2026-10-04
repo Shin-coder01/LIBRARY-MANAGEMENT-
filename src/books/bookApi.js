@@ -6,8 +6,13 @@ const localHost = typeof window === "undefined"
     ? `[${window.location.hostname}]`
     : window.location.hostname;
 
+const apiBaseUrl = process.env.REACT_APP_API_BASE_URL || (process.env.NODE_ENV === "production"
+  ? ""
+  : `${typeof window === "undefined" ? "http" : window.location.protocol}//${localHost}:8080/api`);
+
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL || `${typeof window === "undefined" ? "http" : window.location.protocol}//${localHost}:8080/api`
+  ...(apiBaseUrl ? { baseURL: apiBaseUrl } : {}),
+  timeout: 5000
 });
 
 const starterBooks = [
@@ -33,7 +38,7 @@ const starterBooks = [
   { title: "Verity", author: "Colleen Hoover", category: "Romance", type: "virtual", image: "https://m.media-amazon.com/images/I/91dSMhdIzTL.jpg" }
 ];
 
-let localMode = false;
+let localMode = !apiBaseUrl;
 const storageKey = "books";
 
 function normalizeBook(book, index) {
@@ -80,7 +85,7 @@ function saveLocalBooks(books) {
 
 function getLocalBooks() {
   const stored = readLocalBooks();
-  if (stored !== null) return stored;
+  if (stored?.length) return stored;
   return saveLocalBooks(starterBooks);
 }
 
@@ -114,20 +119,26 @@ export const bookApi = {
   isLocalMode() {
     return localMode;
   },
+  canRetryServer() {
+    return Boolean(apiBaseUrl);
+  },
   async list() {
+    if (!apiBaseUrl) {
+      localMode = true;
+      return getLocalBooks();
+    }
     try {
       const response = await api.get("/books");
       const serverBooks = Array.isArray(response.data) ? response.data.map(normalizeBook) : [];
       const savedBooks = readLocalBooks();
       if (!serverBooks.length) {
         localMode = true;
-        return savedBooks ?? saveLocalBooks(starterBooks);
+        return savedBooks?.length ? savedBooks : saveLocalBooks(starterBooks);
       }
       localMode = false;
       try { localStorage.setItem(storageKey, JSON.stringify(serverBooks)); } catch { /* Cache is optional when the server is available. */ }
       return serverBooks;
-    } catch (error) {
-      if (!isNetworkFailure(error)) throw error;
+    } catch {
       localMode = true;
       return getLocalBooks();
     }

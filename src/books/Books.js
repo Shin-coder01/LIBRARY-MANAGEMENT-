@@ -204,8 +204,8 @@ function Books() {
 
       {localCatalog && (
         <div className="catalogue-local-note" role="status">
-          <span><i aria-hidden="true" /> Browser-saved catalogue. Changes stay on this device while the library server is unavailable.</span>
-          <button type="button" title="Retry library server" aria-label="Retry library server" onClick={fetchBooks}><FiRefreshCw aria-hidden="true" /></button>
+          <span><i aria-hidden="true" /> Browser-saved catalogue. {bookApi.canRetryServer() ? "Changes stay on this device while the library server is unavailable." : "Changes stay on this device."}</span>
+          {bookApi.canRetryServer() && <button type="button" title="Retry library server" aria-label="Retry library server" onClick={fetchBooks}><FiRefreshCw aria-hidden="true" /></button>}
         </div>
       )}
 

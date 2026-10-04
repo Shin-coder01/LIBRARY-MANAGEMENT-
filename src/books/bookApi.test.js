@@ -35,3 +35,23 @@ test("keeps the catalogue usable and editable when the API is offline", async ()
   expect(updated.id).toBe(created.id);
   expect(JSON.parse(localStorage.getItem("books"))).toContainEqual(expect.objectContaining({ id: created.id, available: 2 }));
 });
+
+test("falls back to the local catalogue when the API request times out", async () => {
+  mockGet.mockRejectedValueOnce({ code: "ECONNABORTED" });
+
+  const books = await bookApi.list();
+
+  expect(books.length).toBeGreaterThan(0);
+  expect(bookApi.isLocalMode()).toBe(true);
+});
+
+test("falls back to the local catalogue when the server responds with an error", async () => {
+  localStorage.setItem("books", "[]");
+  mockGet.mockRejectedValueOnce({ response: { status: 503 } });
+
+  const books = await bookApi.list();
+
+  expect(books.length).toBeGreaterThan(0);
+  expect(books[0].title).toBe("Failing Light");
+  expect(bookApi.isLocalMode()).toBe(true);
+});
